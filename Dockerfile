@@ -22,6 +22,9 @@ USER root
 # Install necessary packages
 RUN apt-get -y install openjdk-7-jdk
 
+RUN apt-get -y install mysql-server mysql-client
+
+
 # Switch back to jboss user
 USER meruvian
 
