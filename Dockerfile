@@ -25,20 +25,18 @@ RUN apt-get -y install openjdk-7-jdk
 RUN apt-get -y install mysql-server mysql-client
 
 
-# Switch back to jboss user
+# Switch back to meruvian user
 USER meruvian
 
 # Set the JAVA_HOME variable to make it clear where Java is located
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
-# Install Jetty
-RUN wget -O /opt/jetty.tar.gz "http://eclipse.org/downloads/download.php?file=/jetty/9.0.7.v20131107/dist/jetty-distribution-9.0.7.v20131107.tar.gz&r=1"
-RUN tar -xvf /opt/jetty.tar.gz -C /opt/
-RUN rm /opt/jetty.tar.gz
-RUN mv /opt/jetty-distribution-9.0.7.v20131107 /opt/jetty
-RUN rm -rf /opt/jetty/webapps.demo
-RUN useradd jetty -U -s /bin/false
-RUN chown -R jetty:jetty /opt/jetty
+ENV JETTY_VERSION 9.2.4
+ENV RELEASE_DATE v20141103
+RUN wget http://download.eclipse.org/jetty/stable-9/dist/jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz && \
+    tar -xzvf jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz && \
+    rm -rf jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz && \
+    mv jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}/ /opt/jetty
 
 
 # Set the WILDFLY_VERSION env variable
