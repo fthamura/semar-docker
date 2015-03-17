@@ -31,6 +31,16 @@ USER meruvian
 # Set the JAVA_HOME variable to make it clear where Java is located
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
+# Install Jetty
+RUN wget -O /opt/jetty.tar.gz "http://eclipse.org/downloads/download.php?file=/jetty/9.0.7.v20131107/dist/jetty-distribution-9.0.7.v20131107.tar.gz&r=1"
+RUN tar -xvf /opt/jetty.tar.gz -C /opt/
+RUN rm /opt/jetty.tar.gz
+RUN mv /opt/jetty-distribution-9.0.7.v20131107 /opt/jetty
+RUN rm -rf /opt/jetty/webapps.demo
+RUN useradd jetty -U -s /bin/false
+RUN chown -R jetty:jetty /opt/jetty
+
+
 # Set the WILDFLY_VERSION env variable
 ENV YAMA_VERSION 2.0.Final
 
@@ -39,9 +49,6 @@ RUN cd $HOME && curl -O http://download.madcoder.org/yama/$YAMA_VERSION/yama-$YA
 # Set the YAMA_HOME env variable
 ENV YAMA_HOME /opt/meruvian/yama
 
-# Expose the ports we're interested in
-EXPOSE 8080 
-
-# Set the default command to run on boot
-# This will boot WildFly in the standalone mode and bind to all interface
-CMD ["/opt/meruvian/yama/bin/standalone.sh"]
+# Run Jetty
+EXPOSE 8080
+CMD ["java", "-Djetty.home=/opt/jetty", "-jar", "/opt/jetty/start.jar"]
