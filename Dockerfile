@@ -5,7 +5,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 
 # Install packages necessary to run 
-RUN apt-get -y install unzip curl
+RUN apt-get -y install unzip curl wget
 
 # Create a user and group used to launch processes
 # The user ID 1000 is the default for the first "regular" user on Fedora/RHEL,
@@ -42,7 +42,7 @@ RUN wget http://download.eclipse.org/jetty/stable-9/dist/jetty-distribution-${JE
 # Set the WILDFLY_VERSION env variable
 ENV YAMA_VERSION 2.0.Final
 
-RUN cd $HOME && curl -O http://download.madcoder.org/yama/$YAMA_VERSION/yama-$YAMA_VERSION.zip && unzip yama-$YAMA_VERSION.zip && mv $HOME/yama-$YAMA_VERSION $HOME/yama && rm wildfly-$YAMA_VERSION.zip
+# RUN cd $HOME && curl -O http://download.madcoder.org/yama/$YAMA_VERSION/yama-$YAMA_VERSION.zip && unzip yama-$YAMA_VERSION.zip && mv $HOME/yama-$YAMA_VERSION $HOME/yama && rm wildfly-$YAMA_VERSION.zip
 
 # Set the YAMA_HOME env variable
 ENV YAMA_HOME /opt/meruvian/yama
