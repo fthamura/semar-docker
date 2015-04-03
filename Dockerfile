@@ -11,10 +11,11 @@ RUN apt-get -y install unzip curl wget
 # The user ID 1000 is the default for the first "regular" user on Fedora/RHEL,
 # so there is a high chance that this ID will be equal to the current user
 # making it easier to use volumes (no permission issues)
-RUN groupadd -r meruvian -g 1000 && useradd -u 1000 -r -g meruvian -m -d /opt/meruvian -s /sbin/nologin -c "Meruvian user" meruvian
+# RUN groupadd -r meruvian -g 1000 && useradd -u 1000 -r -g meruvian -m -d /opt/meruvian -s /sbin/nologin -c "Meruvian user" meruvian
 
-# Set the working directory to jboss' user home directory
-WORKDIR /opt/meruvian
+# Set the working directory to meruvian' user home directory
+# WORKDIR /opt/meruvian
+WORKDIR /opt/jetty
 
 # User root user to install software
 USER root
@@ -22,24 +23,26 @@ USER root
 # Install necessary packages
 RUN apt-get -y install openjdk-7-jdk
 
-RUN apt-get -y install mysql-server mysql-client
-
+RUN apt-get -y install mysql-client
+RUN echo "mysql-server-5.5 mysql-server/root_password password <root-password>" | debconf-set-selections
+RUN echo "mysql-server-5.5 mysql-server/root_password_again password <root-password>" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server 
 
 # Switch back to meruvian user
-USER meruvian
+# USER meruvian
 
 # Set the JAVA_HOME variable to make it clear where Java is located
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
-ENV JETTY_VERSION 9.2.4
-ENV RELEASE_DATE v20141103
-RUN wget http://download.eclipse.org/jetty/stable-9/dist/jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz && \
-    tar -xzvf jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz && \
-    rm -rf jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz && \
-    mv jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}/ /opt/jetty
+ENV JETTY_VERSION 9.2.10
+ENV RELEASE_DATE v20150310
+RUN wget http://download.eclipse.org/jetty/stable-9/dist/jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz 
+RUN tar -xzvf jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz 
+RUN rm -rf jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}.tar.gz
+#    mv jetty-distribution-${JETTY_VERSION}.${RELEASE_DATE}/ /opt/jetty
 
 
-# Set the WILDFLY_VERSION env variable
+# Set the YAMA_VERSION env variable
 ENV YAMA_VERSION 2.0.Final
 
 # RUN cd $HOME && curl -O http://download.madcoder.org/yama/$YAMA_VERSION/yama-$YAMA_VERSION.zip && unzip yama-$YAMA_VERSION.zip && mv $HOME/yama-$YAMA_VERSION $HOME/yama && rm wildfly-$YAMA_VERSION.zip
